@@ -1,20 +1,20 @@
 export default {
   COLORS: {
-    RED_300: '#BF3B44',
+    RED_100: '#BF3B44',
     RED_200: '#F3BABD',
-    RED_100: '#F4E6E7',
+    RED_300: '#F4E6E7',
 
-    GREEN_300: '#639339',
+    GREEN_100: '#639339',
     GREEN_200: '#CBE4B4',
-    GREEN_100: '#E5F0DB',
+    GREEN_300: '#E5F0DB',
 
-    GRAY_700: '#1B1D1E',
-    GRAY_600: '#333638',
-    GRAY_500: '#5C6265',
+    GRAY_100: '#1B1D1E',
+    GRAY_200: '#333638',
+    GRAY_300: '#5C6265',
     GRAY_400: '#B9BBBC',
-    GRAY_300: '#DDDEDF',
-    GRAY_200: '#EFF0F0',
-    GRAY_100: '#FAFAFA',
+    GRAY_500: '#DDDEDF',
+    GRAY_600: '#EFF0F0',
+    GRAY_700: '#FAFAFA',
 
     WHITE: '#FFFFFF',
   },
