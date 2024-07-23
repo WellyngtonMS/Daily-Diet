@@ -6,7 +6,8 @@ export declare global {
         statistics: {
             percentage: string;
             type: string
-        }
+        },
+        'new-meal': undefined;
       }
     }
   }
