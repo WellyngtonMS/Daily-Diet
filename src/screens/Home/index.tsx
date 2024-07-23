@@ -1,5 +1,6 @@
 import * as S from './styles';
 import { SectionList } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import { Header } from '@components/Header';
 import { Percent } from '@components/Percent';
@@ -8,6 +9,7 @@ import { DietItem } from '@components/DietItem';
 import { ListEmpty } from '@components/ListEmpty';
 
 export function Home() {
+  const navigation = useNavigation();
   const sections = [
     {
       date: '12.08.22',
@@ -89,7 +91,7 @@ export function Home() {
       <Percent type="GOOD" percentage="90,86%" />
 
       <S.Title>Refeições</S.Title>
-      <Button title="Nova refeição" icon={<S.PlusIcon />} onPress={() => {}} />
+      <Button title="Nova refeição" icon={<S.PlusIcon />} onPress={() => { navigation.navigate('new-meal') }} />
       
       <SectionList
         sections={sections}
