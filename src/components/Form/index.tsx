@@ -2,6 +2,7 @@ import { Button } from '@components/Button';
 import * as S from './styles';
 import { useTheme } from 'styled-components/native';
 import { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 
 type Props = {
   name: string;
@@ -23,6 +24,7 @@ type FormData = {
 
 export function Form({ name, description, date, time, type, titleButton, onSubmit }: Props) {
   const { COLORS } = useTheme()
+  const navigation = useNavigation()
   const [formData, setFormData] = useState<FormData>({
     name,
     description,
@@ -73,6 +75,7 @@ export function Form({ name, description, date, time, type, titleButton, onSubmi
   const handleSubmit = () => {
     if (!validate()) return;
     onSubmit(formData);
+    navigation.navigate('feedback', { type: formData.type });
   }
 
   return (
