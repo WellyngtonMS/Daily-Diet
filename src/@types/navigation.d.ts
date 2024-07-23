@@ -8,6 +8,9 @@ export declare global {
             type: string
         },
         'new-meal': undefined;
+        feedback: {
+          type: 'GOOD' | 'BAD';
+        }
       }
     }
   }
