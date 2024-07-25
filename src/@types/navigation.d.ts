@@ -10,6 +10,9 @@ export declare global {
         'new-meal': undefined;
         feedback: {
           type: 'GOOD' | 'BAD';
+        },
+        details: {
+          mealId: string;
         }
       }
     }
