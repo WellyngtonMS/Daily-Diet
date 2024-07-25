@@ -1,10 +1,16 @@
 import styled, { css } from 'styled-components/native';
 import { TouchableOpacity } from 'react-native';
 
-export const Container = styled(TouchableOpacity)`
+type Props = {
+  variant?: 'primary' | 'secondary';
+}
+
+export const Container = styled(TouchableOpacity)<Props>`
   width: 100%;
   height: 50px;
-  background-color: ${({ theme }) => theme.COLORS.GRAY_200};
+  background-color: ${({ theme, variant }) => variant === 'primary' ? theme.COLORS.GRAY_200 : theme.COLORS.GRAY_700};
+  border-width: 1px;
+  border-color: ${({ theme, variant }) => variant === 'primary' ? theme.COLORS.GRAY_200 : theme.COLORS.GRAY_200};
   border-radius: 8px;
   flex-direction: row;
   align-items: center;
@@ -14,11 +20,11 @@ export const Container = styled(TouchableOpacity)`
   gap: 16px;
 `;
 
-export const Title = styled.Text`
-  ${({ theme }) => css`
+export const Title = styled.Text<Props>`
+  ${({ theme, variant }) => css`
     font-size: ${theme.FONT_SIZE.SM}px;
     font-family: ${theme.FONT_FAMILY.BOLD};
-    color: ${({ theme }) => theme.COLORS.WHITE};
+    color: ${({ theme }) => variant === 'primary' ? theme.COLORS.WHITE : theme.COLORS.GRAY_100};
   `}
 `;
 
