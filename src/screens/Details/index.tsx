@@ -1,9 +1,11 @@
 import * as S from './styles';
+import { useState } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from 'styled-components/native';
 import { useRoute } from '@react-navigation/native';
 import { DefaultHeader } from '@components/DefaultHeader';
 import { Button } from '@components/Button';
+import { DeleteModal } from '@components/DeleteModal';
 
 type RouteParams = { mealId: string };
 
@@ -12,6 +14,11 @@ export function Details() {
   const theme = useTheme();
   const route = useRoute();
   const { mealId } = route.params as RouteParams;
+  const [isShowRemoveModal, setIsShowRemoveModal] = useState(false);
+
+  const handleShowRemoveModal = () => {
+    setIsShowRemoveModal(true);
+  };
 
   return (
     <S.Container style={{ backgroundColor: theme.COLORS.GREEN_300, paddingTop: insets.top }}>
@@ -32,8 +39,16 @@ export function Details() {
         </S.DetailsContainer>
 
         <Button title="Editar refeição" icon={<S.EditIcon />} style={{ marginBottom: 0 }} />
-        <Button title="Excluir refeição" icon={<S.DeleteIcon />} variant="secondary" />
+        <Button title="Excluir refeição" icon={<S.DeleteIcon />} variant="secondary" onPress={handleShowRemoveModal} />
       </S.Content>
+
+      {isShowRemoveModal && (
+        <DeleteModal
+          onClose={() => setIsShowRemoveModal(false)}
+          onConfirm={() => setIsShowRemoveModal(false)}
+          visible={isShowRemoveModal}
+        />
+      )}
     </S.Container>
   );
 }
