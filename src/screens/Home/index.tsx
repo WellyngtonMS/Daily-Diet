@@ -102,6 +102,7 @@ export function Home() {
             status={item.status as 'GOOD' | 'BAD'}
             time={item.time}
             title={item.title}
+            onPress={() => navigation.navigate('details', { mealId: item.id })}
           />
         )}
         renderSectionHeader={({ section: { date } }) => <S.TitleSection>{date}</S.TitleSection>}
