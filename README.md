@@ -20,6 +20,8 @@ Daily Diet é um aplicativo com a proposta de ajudar o usuário a controlar sua 
 - Navegação entre telas em pilha
 - Armazenamento local das refeições
 
+Sobre o projeto [Notion](https://efficient-sloth-d85.notion.site/Desafio-02-Daily-Diet-98b7d85ec7e9428aa0f9f3bceed4380f).
+
 ## 🔖 Layout
 
 Você pode visualizar o layout do projeto no formato através [desse link](https://www.figma.com/community/file/1218573349379609244). Lembrando que você irá precisar ter uma conta no [Figma](http://figma.com/).
