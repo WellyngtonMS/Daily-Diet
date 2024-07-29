@@ -7,7 +7,9 @@ export declare global {
             percentage: string;
             type: string
         },
-        'new-meal': undefined;
+        'new-meal': {
+          mealId?: string;
+        },
         feedback: {
           type: 'GOOD' | 'BAD';
         },
