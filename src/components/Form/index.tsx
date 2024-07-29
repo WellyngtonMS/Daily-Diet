@@ -3,80 +3,81 @@ import * as S from './styles';
 import { useTheme } from 'styled-components/native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { MealData } from '@storage/meals/mealStorageDTO';
 
 type Props = {
-  name: string;
+  title: string;
   description: string;
   date: string;
   time: string;
   type: 'GOOD' | 'BAD';
   titleButton: string;
-  onSubmit: (data: FormData) => void;
+  onSubmit: (data: MealData) => void;
 };
 
-type FormData = {
-  name: string;
-  description: string;
-  date: string;
-  time: string;
-  type: 'GOOD' | 'BAD';
-}
+const generateRandomId = () => {
+  return Math.random().toString(36).substr(2, 9);
+};
 
-export function Form({ name, description, date, time, type, titleButton, onSubmit }: Props) {
-  const { COLORS } = useTheme()
-  const navigation = useNavigation()
-  const [formData, setFormData] = useState<FormData>({
-    name,
+export function Form({ title, description, date, time, type, titleButton, onSubmit }: Props) {
+  const { COLORS } = useTheme();
+  const navigation = useNavigation();
+  
+
+  const [formData, setFormData] = useState<MealData>({
+    id: generateRandomId(),
+    title,
     description,
     date,
     time,
     type,
-  })
-  const [errors, setErrors] = useState<{ [key: string]: string }>({})
+  });
+
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleChangeFormatDate = (value: string) => {
-    let formattedDate = value.replace(/[^0-9]/g, '')
+    let formattedDate = value.replace(/[^0-9]/g, '');
     if (formattedDate.length > 2) {
-      formattedDate = `${formattedDate.slice(0, 2)}/${formattedDate.slice(2)}`
+      formattedDate = `${formattedDate.slice(0, 2)}/${formattedDate.slice(2)}`;
     }
     if (formattedDate.length > 5) {
-      formattedDate = `${formattedDate.slice(0, 5)}/${formattedDate.slice(5)}`
+      formattedDate = `${formattedDate.slice(0, 5)}/${formattedDate.slice(5)}`;
     }
-    setFormData({ ...formData, date: formattedDate })
-  }
+    setFormData({ ...formData, date: formattedDate });
+  };
 
   const handleChangeFormatTime = (value: string) => {
-    let formattedTime = value.replace(/[^0-9]/g, '')
+    let formattedTime = value.replace(/[^0-9]/g, '');
     if (formattedTime.length > 2) {
-      formattedTime = `${formattedTime.slice(0, 2)}:${formattedTime.slice(2)}`
+      formattedTime = `${formattedTime.slice(0, 2)}:${formattedTime.slice(2)}`;
     }
-    setFormData({ ...formData, time: formattedTime })
-  }
+    setFormData({ ...formData, time: formattedTime });
+  };
 
   const handleChangeType = (value: 'GOOD' | 'BAD') => {
-    setFormData({ ...formData, type: value })
-  }
+    setFormData({ ...formData, type: value });
+  };
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!formData.name) newErrors.name = 'Nome é obrigatório';
+    if (!formData.title) newErrors.name = 'Nome é obrigatório';
     if (!formData.description) newErrors.description = 'Descrição é obrigatória';
     if (!formData.date) newErrors.date = 'Data é obrigatória';
     if (!/^\d{2}\/\d{2}\/\d{4}$/.test(formData.date)) newErrors.date = 'Data inválida';
     if (!formData.time) newErrors.time = 'Hora é obrigatória';
     if (!/^\d{2}:\d{2}$/.test(formData.time)) newErrors.time = 'Hora inválida';
-    if (!formData.type) newErrors.type = 'Informe se é a refeição está dentro da dieta';
+    if (!formData.type) newErrors.type = 'Informe se a refeição está dentro da dieta';
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }
+  };
 
   const handleSubmit = () => {
     if (!validate()) return;
-    onSubmit(formData);
+    onSubmit({ ...formData });
     navigation.navigate('feedback', { type: formData.type });
-  }
+  };
 
   return (
     <>
@@ -84,8 +85,8 @@ export function Form({ name, description, date, time, type, titleButton, onSubmi
         <S.Title>Nome</S.Title>
         <S.Input
           placeholder='Nome da refeição'
-          value={formData.name}
-          onChangeText={(value) => setFormData({ ...formData, name: value })}
+          value={formData.title}
+          onChangeText={(value) => setFormData({ ...formData, title: value })}
         />
         {errors.name && <S.ErrorText>{errors.name}</S.ErrorText>}
       </S.WrapperInput>
@@ -126,7 +127,6 @@ export function Form({ name, description, date, time, type, titleButton, onSubmi
           {errors.time && <S.ErrorText>{errors.time}</S.ErrorText>}
         </S.WrapperText>
       </S.Wrapper>
-
 
       <S.Title>Está dentro da dieta?</S.Title>
       <S.WrapperInput>

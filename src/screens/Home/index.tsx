@@ -1,6 +1,9 @@
 import * as S from './styles';
-import { SectionList } from 'react-native';
+import { RefreshControl, SectionList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { useTheme } from 'styled-components';
 
 import { Header } from '@components/Header';
 import { Percent } from '@components/Percent';
@@ -8,82 +11,58 @@ import { Button } from '@components/Button';
 import { DietItem } from '@components/DietItem';
 import { ListEmpty } from '@components/ListEmpty';
 
+import { getAllMeals } from '@storage/meals/getAllMeals';
+import { MealStorageDTO } from '@storage/meals/mealStorageDTO';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 export function Home() {
+  const { COLORS } = useTheme();
+  const [isLoading, setIsLoading] = useState(false);
+  const [meals, setMeals] = useState<MealStorageDTO[]>([]);
+  const [sections, setSections] = useState<MealStorageDTO[]>([]);
+
+  const formatDate = (dateString: string) => {
+    const [day, month, year] = dateString.split('/');
+    return `${day}.${month}.${year}`;
+  };
+  
+  const organizeMealsBySections = (meals: MealStorageDTO[]) => {
+    const sectionsMap = meals.reduce((acc, meal) => {
+      const formattedDate = formatDate(meal.date);
+  
+      if (!acc[formattedDate]) {
+        acc[formattedDate] = {
+          date: formattedDate,
+          id: meal.id,
+          data: [],
+        };
+      }
+      acc[formattedDate].data = acc[formattedDate].data.concat(meal.data);
+      return acc;
+    }, {} as { [key: string]: MealStorageDTO });
+  
+    return Object.values(sectionsMap);
+  };
+
   const navigation = useNavigation();
-  const sections = [
-    {
-      date: '12.08.22',
-      id: '120822',
-      data: [
-        {
-          id: '120822-1',
-          title: 'X-tudo',
-          time: '20:00',
-          status: 'BAD',
-        },
-        {
-          id: '120822-2',
-          title: 'Whey protein com leite',
-          time: '16:00',
-          status: 'GOOD',
-        }
-      ]
-    },
-    {
-      date: '12.08.22',
-      id: '120822',
-      data: [
-        {
-          id: '120822-3',
-          title: 'X-tudo',
-          time: '20:00',
-          status: 'BAD',
-        },
-        {
-          id: '120822-4',
-          title: 'Whey protein com leite',
-          time: '16:00',
-          status: 'GOOD',
-        }
-      ]
-    },
-    {
-      date: '12.08.22',
-      id: '120822',
-      data: [
-        {
-          id: '120822-5',
-          title: 'X-tudo',
-          time: '20:00',
-          status: 'BAD',
-        },
-        {
-          id: '120822-6',
-          title: 'Whey protein com leite',
-          time: '16:00',
-          status: 'GOOD',
-        }
-      ]
-    },
-    {
-      date: '12.08.22',
-      id: '120822',
-      data: [
-        {
-          id: '120822-7',
-          title: 'X-tudo',
-          time: '20:00',
-          status: 'BAD',
-        },
-        {
-          id: '120822-8',
-          title: 'Whey protein com leite',
-          time: '16:00',
-          status: 'GOOD',
-        }
-      ]
+
+  async function fetchMeals() {
+    try {
+      setIsLoading(true);
+      const data = await getAllMeals();
+      setMeals(data);
+      setSections(organizeMealsBySections(data));
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  }
+
+  useFocusEffect(useCallback(() => {
+    fetchMeals();
+  }, []));
+
   return (
     <S.Container>
       <Header />
@@ -91,7 +70,7 @@ export function Home() {
       <Percent type="GOOD" percentage="90,86%" />
 
       <S.Title>Refeições</S.Title>
-      <Button title="Nova refeição" icon={<S.PlusIcon />} onPress={() => { navigation.navigate('new-meal') }} />
+      <Button title="Nova refeição" icon={<S.PlusIcon />} onPress={() => { navigation.navigate('new-meal', { mealId: '' }) }} />
       
       <SectionList
         sections={sections}
@@ -99,7 +78,7 @@ export function Home() {
         stickySectionHeadersEnabled={false}
         renderItem={({ item }) => (
           <DietItem
-            status={item.status as 'GOOD' | 'BAD'}
+            status={item.type as 'GOOD' | 'BAD'}
             time={item.time}
             title={item.title}
             onPress={() => navigation.navigate('details', { mealId: item.id })}
@@ -109,6 +88,14 @@ export function Home() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={sections.length === 0 && { flex: 1 }}
         ListEmptyComponent={() => <ListEmpty message="Não há refeições cadastradas" />}
+        refreshControl={
+          <RefreshControl
+              colors={[COLORS.GREEN_200]}
+              tintColor={COLORS.GREEN_200}
+              refreshing={isLoading}
+              onRefresh={fetchMeals}
+          />
+        }
       />
     </S.Container>
   );
