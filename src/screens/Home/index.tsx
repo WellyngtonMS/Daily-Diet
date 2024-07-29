@@ -13,13 +13,13 @@ import { ListEmpty } from '@components/ListEmpty';
 
 import { getAllMeals } from '@storage/meals/getAllMeals';
 import { MealStorageDTO } from '@storage/meals/mealStorageDTO';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export function Home() {
   const { COLORS } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [meals, setMeals] = useState<MealStorageDTO[]>([]);
   const [sections, setSections] = useState<MealStorageDTO[]>([]);
+  const [percentage, setPercentage] = useState<string>('0%');
 
   const formatDate = (dateString: string) => {
     const [day, month, year] = dateString.split('/');
@@ -52,12 +52,22 @@ export function Home() {
       const data = await getAllMeals();
       setMeals(data);
       setSections(organizeMealsBySections(data));
+      calculatePercentage(data);
     } catch (error) {
       throw error;
     } finally {
       setIsLoading(false);
     }
   }
+
+  const calculatePercentage = (meals: MealStorageDTO[]) => {
+    const totalMeals = meals.reduce((acc, meal) => acc + meal.data.length, 0);
+    const goodMeals = meals.reduce((acc, meal) => {
+      return acc + meal.data.filter((data) => data.type === 'GOOD').length;
+    }, 0);
+    const percentage = totalMeals > 0 ? ((goodMeals / totalMeals) * 100).toFixed(2) : '0';
+    setPercentage(`${percentage}%`);
+  };
 
   useFocusEffect(useCallback(() => {
     fetchMeals();
@@ -67,7 +77,7 @@ export function Home() {
     <S.Container>
       <Header />
 
-      <Percent type="GOOD" percentage="90,86%" />
+      <Percent type={parseFloat(percentage) > 50 ? 'GOOD' : 'BAD'} percentage={percentage} />
 
       <S.Title>Refeições</S.Title>
       <Button title="Nova refeição" icon={<S.PlusIcon />} onPress={() => { navigation.navigate('new-meal', { mealId: '' }) }} />

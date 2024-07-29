@@ -4,6 +4,7 @@ import { useTheme } from 'styled-components/native';
 import { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { MealData } from '@storage/meals/mealStorageDTO';
+import { Platform, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 
 type Props = {
   title: string;
@@ -22,7 +23,7 @@ const generateRandomId = () => {
 export function Form({ title, description, date, time, type, titleButton, onSubmit }: Props) {
   const { COLORS } = useTheme();
   const navigation = useNavigation();
-  
+
 
   const [formData, setFormData] = useState<MealData>({
     id: generateRandomId(),
@@ -80,77 +81,79 @@ export function Form({ title, description, date, time, type, titleButton, onSubm
   };
 
   return (
-    <>
-      <S.WrapperInput>
-        <S.Title>Nome</S.Title>
-        <S.Input
-          placeholder='Nome da refeição'
-          value={formData.title}
-          onChangeText={(value) => setFormData({ ...formData, title: value })}
-        />
-        {errors.name && <S.ErrorText>{errors.name}</S.ErrorText>}
-      </S.WrapperInput>
-      <S.WrapperInput>
-        <S.Title>Descrição</S.Title>
-        <S.Input
-          placeholder='Descrição da refeição'
-          value={formData.description}
-          onChangeText={(value) => setFormData({ ...formData, description: value })}
-          multiline
-          numberOfLines={5}
-          style={{ height: 100 }}
-        />
-        {errors.description && <S.ErrorText>{errors.description}</S.ErrorText>}
-      </S.WrapperInput>
-
-      <S.Wrapper>
-        <S.WrapperText>
-          <S.Title>Data</S.Title>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <S.WrapperInput>
+          <S.Title>Nome</S.Title>
           <S.Input
-            placeholder='DD/MM/AAAA'
-            value={formData.date}
-            onChangeText={(value) => handleChangeFormatDate(value)}
-            keyboardType='numeric'
-            maxLength={10}
+            placeholder='Nome da refeição'
+            value={formData.title}
+            onChangeText={(value) => setFormData({ ...formData, title: value })}
           />
-          {errors.date && <S.ErrorText>{errors.date}</S.ErrorText>}
-        </S.WrapperText>
-        <S.WrapperText style={{ marginRight: 0 }}>
-          <S.Title>Hora</S.Title>
+          {errors.name && <S.ErrorText>{errors.name}</S.ErrorText>}
+        </S.WrapperInput>
+        <S.WrapperInput>
+          <S.Title>Descrição</S.Title>
           <S.Input
-            placeholder='HH:MM'
-            value={formData.time}
-            onChangeText={(value) => handleChangeFormatTime(value)}
-            keyboardType='numeric'
-            maxLength={5}
+            placeholder='Descrição da refeição'
+            value={formData.description}
+            onChangeText={(value) => setFormData({ ...formData, description: value })}
+            multiline
+            numberOfLines={5}
+            style={{ height: 100 }}
           />
-          {errors.time && <S.ErrorText>{errors.time}</S.ErrorText>}
-        </S.WrapperText>
-      </S.Wrapper>
+          {errors.description && <S.ErrorText>{errors.description}</S.ErrorText>}
+        </S.WrapperInput>
 
-      <S.Title>Está dentro da dieta?</S.Title>
-      <S.WrapperInput>
         <S.Wrapper>
-          <S.WrapperText style={{ marginRight: 8 }}>
-            <S.Content type="GOOD" isSelected={formData.type === 'GOOD'} onPress={() => handleChangeType('GOOD')}>
-              <S.Icon color={COLORS.GREEN_100} />
-              <S.Text>Sim</S.Text>
-            </S.Content>
+          <S.WrapperText>
+            <S.Title>Data</S.Title>
+            <S.Input
+              placeholder='DD/MM/AAAA'
+              value={formData.date}
+              onChangeText={(value) => handleChangeFormatDate(value)}
+              keyboardType='numeric'
+              maxLength={10}
+            />
+            {errors.date && <S.ErrorText>{errors.date}</S.ErrorText>}
           </S.WrapperText>
-
           <S.WrapperText style={{ marginRight: 0 }}>
-            <S.Content type="BAD" isSelected={formData.type === 'BAD'} onPress={() => handleChangeType('BAD')}>
-              <S.Icon color={COLORS.RED_100} />
-              <S.Text>Não</S.Text>
-            </S.Content>
+            <S.Title>Hora</S.Title>
+            <S.Input
+              placeholder='HH:MM'
+              value={formData.time}
+              onChangeText={(value) => handleChangeFormatTime(value)}
+              keyboardType='numeric'
+              maxLength={5}
+            />
+            {errors.time && <S.ErrorText>{errors.time}</S.ErrorText>}
           </S.WrapperText>
         </S.Wrapper>
-        {errors.type && <S.ErrorText>{errors.type}</S.ErrorText>}
-      </S.WrapperInput>
 
-      <S.ButtonWrapper>
-        <Button title={titleButton} onPress={() => handleSubmit()} />
-      </S.ButtonWrapper>
-    </>
+        <S.Title>Está dentro da dieta?</S.Title>
+        <S.WrapperInput>
+          <S.Wrapper>
+            <S.WrapperText style={{ marginRight: 8 }}>
+              <S.Content type="GOOD" isSelected={formData.type === 'GOOD'} onPress={() => handleChangeType('GOOD')}>
+                <S.Icon color={COLORS.GREEN_100} />
+                <S.Text>Sim</S.Text>
+              </S.Content>
+            </S.WrapperText>
+
+            <S.WrapperText style={{ marginRight: 0 }}>
+              <S.Content type="BAD" isSelected={formData.type === 'BAD'} onPress={() => handleChangeType('BAD')}>
+                <S.Icon color={COLORS.RED_100} />
+                <S.Text>Não</S.Text>
+              </S.Content>
+            </S.WrapperText>
+          </S.Wrapper>
+          {errors.type && <S.ErrorText>{errors.type}</S.ErrorText>}
+        </S.WrapperInput>
+
+        <S.ButtonWrapper>
+          <Button title={titleButton} onPress={() => handleSubmit()} />
+        </S.ButtonWrapper>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
